@@ -1,0 +1,13 @@
+---
+title: "STAT 222 HW 1"
+author: "Matthew Zhao"
+date: "4/2/2022"
+output: pdf_document
+---
+
+## Problem 1
+#### (a)
+$\bar{y}_{\cdot\cdot} = \displaystyle \frac{1}{N} \sum_{i=1}^{g} n_i \bar{y}_{i\cdot} = \frac{1}{7+8+6+8} (7*3.7457 + 8*3.5800+6*3.5983+8*3.9225) = \frac{1}{29} * 107.8297 \approx 3.718266 $
+
+
+$SS_{trt} = \displaystyle \sum_{i=1}^g \frac{}{}$
