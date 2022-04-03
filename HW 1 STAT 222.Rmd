@@ -7,7 +7,7 @@ output: pdf_document
 
 ## Problem 1
 #### (a)
-$\bar{y}_{\cdot\cdot} = \displaystyle \frac{1}{N} \sum_{i=1}^{g} n_i \bar{y}_{i\cdot} = \frac{1}{7+8+6+8} (7*3.7457 + 8*3.5800+6*3.5983+8*3.9225) = \frac{1}{29} * 107.8297 \approx 3.718266 $
+$\bar{y}_{\cdot\cdot} = \displaystyle \frac{1}{N} \sum_{i=1}^{g} n_i \bar{y}_{i\cdot} = \frac{1}{7+8+6+8} (7*3.7457 + 8*3.5800+6*3.5983+8*3.9225) = \frac{1}{29} * 107.8297 \approx 3.718266$
 
 
-$SS_{trt} = \displaystyle \sum_{i=1}^g \frac{}{}$
+$SS_{trt} = \displaystyle \sum_{i=1}^g n_{i}(\bar{y}_{i\cdot} - \bar{y}_{\cdot\cdot})^{2} = 7*(3.7457 - 3.718266)^2 + 8*(3.5800 - 3.718266)^2 + 6*(3.5983 - 3.718266)^2 + 8*(3.9225 - 3.718266)^2 \approx 0.5782515$
