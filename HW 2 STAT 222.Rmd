@@ -21,6 +21,7 @@ options(show.signif.stars = FALSE) # Show no stars for significance tests
 ```
 ```{r include=F}
 library(mosaic)
+library(tidyverse)
 ```
 
 ## Question 1
@@ -92,22 +93,22 @@ For the first contrast:<br>
 $\hat{C_{1}} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 1*\bar{y}_{0\cdot} + -0.5*\bar{y}_{8p\cdot}+-0.5*\bar{y}_{8v\cdot} = 1*63.36 + -0.5*56.76 + -0.5*38.72 =15.62$
 
 
-$\displaystyle SE(\hat{C_{1}}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{1^2}{25}} + \frac{(-0.5)^2}{25}} + \frac{(-0.5)^2}{25})} = 3.6249$
+$\displaystyle SE(\hat{C_{1}}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{1^2}{25} + \frac{(-0.5)^2}{25} + \frac{(-0.5)^2}{25})} = 3.6249$
 
 
 CI: $15.62 \pm 1.9799 \times 3.6249 = C_{1} \in (8.4431,22.797)$
 
 
 For second contrast:<br>
-$\hat{C_{2} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 0.5*\bar{y}_{1v\cdot} + 0.5*\bar{y}_{8v\cdot}+-0.5*\bar{y}_{1p\cdot} +-0.5*\bar{y}_{8p\cdot}= 0.5*64.80 + 0.5*38.72+ -0.5*63.56+ -0.5*56.76= -8.4$
+$\hat{C_{2}} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 0.5*\bar{y}_{1v\cdot} + 0.5*\bar{y}_{8v\cdot}+-0.5*\bar{y}_{1p\cdot} +-0.5*\bar{y}_{8p\cdot}= 0.5*64.80 + 0.5*38.72+ -0.5*63.56+ -0.5*56.76= -8.4$
 
 
-$\displaystyle SE(\hat{C_{2}}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{0.5^2}{25}} + \frac{0.5^2}{25}} + \frac{(-0.5)^2}{25}} + \frac{(-0.5)^2}{25})} = 2.9597$
+$\displaystyle SE(\hat{C_{2}}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{0.5^2}{25} + \frac{0.5^2}{25} + \frac{(-0.5)^2}{25} + \frac{(-0.5)^2}{25})} = 2.9597$
 
 
 CI: $-8.4 \pm 1.9799 \times 2.9597 = C_{2} \in (-14.26,-2.5401)$
 
-From the confidence intervals, we can conclude that having 8 female companions prolongs a fly's lifespan and that having unreceptive companions negatively impacts a fly's lifespan.
+From the confidence intervals, we can conclude that having 8 female companions reduces a male fly's lifespan and that having unreceptive companions positively impacts a fly's lifespan.
 
 ### Q1c --- 4 points
 $C =(\mu_{1p}+\mu_{1v})/2 - (\mu_{8p}+\mu_{8v})/2$ \dotfill (effect of receptive/not receptive across number of companions)
@@ -116,10 +117,10 @@ $C =(\mu_{1p}+\mu_{1v})/2 - (\mu_{8p}+\mu_{8v})/2$ \dotfill (effect of receptive
 $t = \displaystyle \frac{\hat{C}}{\text{SE}(\hat{C})} = \frac{\sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot}}{\sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}}}$
 
 
-$\hat{C = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 0.5*\bar{y}_{1p\cdot} + 0.5*\bar{y}_{1v\cdot}+-0.5*\bar{y}_{8p\cdot} +-0.5*\bar{y}_{8v\cdot}= 0.5*63.56 + 0.5*64.80+ -0.5*56.76+ -0.5*38.72= 16.44$
+$\hat{C} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 0.5*\bar{y}_{1p\cdot} + 0.5*\bar{y}_{1v\cdot}+-0.5*\bar{y}_{8p\cdot} +-0.5*\bar{y}_{8v\cdot}= 0.5*63.56 + 0.5*64.80+ -0.5*56.76+ -0.5*38.72= 16.44$
 
 
-$\displaystyle SE(\hat{C) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{0.5^2}{25}} + \frac{0.5^2}{25}} + \frac{(-0.5)^2}{25}} + \frac{(-0.5)^2}{25})} = 2.9597$
+$\displaystyle SE(\hat{C}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{0.5^2}{25} + \frac{0.5^2}{25} + \frac{(-0.5)^2}{25} + \frac{(-0.5)^2}{25})} = 2.9597$
 
 $t = \displaystyle \frac{16.44}{2.9597}=5.5546$
 ```{r}
@@ -129,7 +130,7 @@ We can conclude at the 95% confidence level that the effect of receptive vs nonr
 
 ### Q1d --- 4 points
 
-
+No, we cannot conclude that reproductive activities shorten males’ mean lifespan because we also increase the number of companions between the 'none' and '1 virgin' group to the '8 virgin' group. This means that we could be confounding the effect of reproductive activities with increasing the number of companions. As a result, we need to have control groups, namely '1 pregnant' and '8 pregnant' so we can control for number of companions and isolate the effect of reproductive activities on males' mean lifespan. 
 
 ## Question 2 --- 6 points
 
@@ -143,3 +144,28 @@ ggplot(ex3.5, aes(x=trt, y=deg))+ geom_point() +
   ylab("Angle (Degree)")+xlab("Delay (minutes)")
 ```
 
+
+
+We define the contrast as $C =(\mu_{30}-\mu_{45})/15 - (\mu_{45}-\mu_{60})/15$, comparing the slopes to see if the relationship is the same. This simplifies to $C =(\mu_{30}+\mu_{60}-2\mu_{45})/15$
+
+
+Here we find the group means:
+```{r}
+ex3.5 %>% group_by(trt) %>% summarise(means = mean(deg))
+```
+
+$\hat{C} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = \frac{1}{15}*\bar{y}_{30} + \frac{1}{15}*\bar{y}_{60} - \frac{2}{15}*\bar{y}_{45}= \frac{1}{15}*139.6 + \frac{1}{15}*122.4 - \frac{2}{15}*133.6= -0.34667$
+
+
+$\displaystyle SE(\hat{C}) = \sqrt{MSE*\sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}}$ <br>We get the MSE from the ANOVA table below:
+```{r}
+anova(lm(deg ~ trt, data = ex3.5))
+```
+$\displaystyle SE(\hat{C}) = \sqrt{55 * (\frac{(\frac{1}{15})^2}{5} + \frac{(\frac{1}{15})^2}{5} + \frac{(\frac{-2}{15})^2}{5})} = 0.5416$
+
+
+$t = \displaystyle \frac{-0.34667}{0.5416}=-0.64008$
+```{r}
+2*pt(abs(-0.64008),15-2,lower.tail = F)
+```
+Since $p>0.05$, we fail to reject the null hypothesis that the relationship is linear, meaning that it is likely that the relationship is indeed linear. 
