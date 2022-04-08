@@ -1,0 +1,145 @@
+---
+title: 'STAT 222 Spring 2022 HW2'
+author: "Matthew Zhao"
+fontsize: 12pt
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin=0.5in
+fig_crop: no
+---
+
+```{r include=F}
+library(knitr)
+library(ggplot2)
+knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=TRUE)
+options(width=70, digits=5, scipen=8)
+options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+```{r include=F}
+library(mosaic)
+```
+
+## Question 1
+
+```{r}
+pr3.2 = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/pr3.2",h=T)
+pr3.2$trt = factor(pr3.2$trt, labels=c("none", "1 pregnant", "1 virgin",
+                    "8 pregnant", "8 virgin"))
+```
+
+```{r, fig.width=3.5, fig.height=2.8, out.width='50%'}
+library(ggplot2)
+ggplot(pr3.2, aes(x=trt, y=days))+ geom_point() +
+  ylab("lifespan of male fruit flies (days)")+xlab("Treatment")
+```
+
+### Q1a --- 5 points
+
+```{r, message=FALSE}
+library(mosaic)
+mean(days ~ trt, data=pr3.2)
+```
+```{r}
+anova(lm(days ~ trt, data = pr3.2))
+```
+$\text{LSD}= t_{N-g,\frac{\alpha}{2}} * \sqrt{\text{MSE}(\frac{1}{n}+\frac{1}{n})}$
+We find the value for $t_{N-g,\frac{\alpha}{2}}$ here:
+```{r}
+qt(0.05/2,125-5,lower.tail=F)
+```
+For $\sqrt{\text{MSE}(\frac{1}{n}+\frac{1}{n})}$, each group has $n=25$ observations and the MSE is taken from the ANOVA table above and is equal to 219 Therefore, $\sqrt{219(\frac{1}{25}+\frac{1}{25})}=15.453$ and so LSD $=1.9799*4.1857 = 8.2873$.
+
+
+Below we calculate the group means and :
+```{r echo=F}
+fly_means <- pr3.2 %>% group_by(trt) %>% summarise(group_mean = mean(days))
+for (x in 1:(nrow(fly_means)-1)) {
+  for (y in (x+1):nrow(fly_means)) {
+    print(paste0(as.character(fly_means[x,1]),"-",
+                 as.character(fly_means[y,1]), " ",
+                 round(abs(fly_means$group_mean[x]-
+                             fly_means$group_mean[y]),3),
+                 "   ",
+                 ifelse(abs(fly_means$group_mean[x]-
+                              fly_means$group_mean[y]) < 8.2873,
+                        "Not Significant", "Significant")))
+  }
+}
+```
+Underline Diagram
+```
+  5 (8v)      4 (8p)       1 (none)      2 (1p)      3 (1v)
+   38.72       56.76         63.36        63.56      64.80
+            ------------------------------------------------
+```
+
+### Q1b --- 6 points
+
+Construct a 95% confidence for each of the contrasts below;
+
+* $C_1 = \mu_0 - (\mu_{8p}+\mu_{8v})/2$ \dotfill (none v.s. 8 female companion)
+* $C_2 = (\mu_{1v}+\mu_{8v})/2-(\mu_{1p}+\mu_{8p})/2$ \dotfill (virgin v.s. pregnant)
+
+
+A 95% confidence interval for a contrast equals $\hat{C}_{k\cdot} \pm t_{N-g,\frac{\alpha}{2}} \times SE(\hat{C})$ where $\displaystyle SE(\hat{C}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}}$
+
+
+For the first contrast:<br>
+$\hat{C_{1}} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 1*\bar{y}_{0\cdot} + -0.5*\bar{y}_{8p\cdot}+-0.5*\bar{y}_{8v\cdot} = 1*63.36 + -0.5*56.76 + -0.5*38.72 =15.62$
+
+
+$\displaystyle SE(\hat{C_{1}}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{1^2}{25}} + \frac{(-0.5)^2}{25}} + \frac{(-0.5)^2}{25})} = 3.6249$
+
+
+CI: $15.62 \pm 1.9799 \times 3.6249 = C_{1} \in (8.4431,22.797)$
+
+
+For second contrast:<br>
+$\hat{C_{2} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 0.5*\bar{y}_{1v\cdot} + 0.5*\bar{y}_{8v\cdot}+-0.5*\bar{y}_{1p\cdot} +-0.5*\bar{y}_{8p\cdot}= 0.5*64.80 + 0.5*38.72+ -0.5*63.56+ -0.5*56.76= -8.4$
+
+
+$\displaystyle SE(\hat{C_{2}}) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{0.5^2}{25}} + \frac{0.5^2}{25}} + \frac{(-0.5)^2}{25}} + \frac{(-0.5)^2}{25})} = 2.9597$
+
+
+CI: $-8.4 \pm 1.9799 \times 2.9597 = C_{2} \in (-14.26,-2.5401)$
+
+From the confidence intervals, we can conclude that having 8 female companions prolongs a fly's lifespan and that having unreceptive companions negatively impacts a fly's lifespan.
+
+### Q1c --- 4 points
+$C =(\mu_{1p}+\mu_{1v})/2 - (\mu_{8p}+\mu_{8v})/2$ \dotfill (effect of receptive/not receptive across number of companions)
+
+
+$t = \displaystyle \frac{\hat{C}}{\text{SE}(\hat{C})} = \frac{\sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot}}{\sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}}}$
+
+
+$\hat{C = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = 0.5*\bar{y}_{1p\cdot} + 0.5*\bar{y}_{1v\cdot}+-0.5*\bar{y}_{8p\cdot} +-0.5*\bar{y}_{8v\cdot}= 0.5*63.56 + 0.5*64.80+ -0.5*56.76+ -0.5*38.72= 16.44$
+
+
+$\displaystyle SE(\hat{C) = \sqrt{MSE* \sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}} = \sqrt{219 * (\frac{0.5^2}{25}} + \frac{0.5^2}{25}} + \frac{(-0.5)^2}{25}} + \frac{(-0.5)^2}{25})} = 2.9597$
+
+$t = \displaystyle \frac{16.44}{2.9597}=5.5546$
+```{r}
+2*pt(5.5546,125-5,lower.tail = F)
+```
+We can conclude at the 95% confidence level that the effect of receptive vs nonreceptive companions on flies' lifespan does change with the number of companions since $p<0.05$.
+
+### Q1d --- 4 points
+
+
+
+## Question 2 --- 6 points
+
+```{r}
+ex3.5 = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/ex3.5", h=T)
+ex3.5$trt = 15+15*ex3.5$trt 
+```
+Here is a plot of the data.
+```{r, fig.width=3.5, fig.height=2.2, out.width='50%'}
+ggplot(ex3.5, aes(x=trt, y=deg))+ geom_point() +
+  ylab("Angle (Degree)")+xlab("Delay (minutes)")
+```
+
