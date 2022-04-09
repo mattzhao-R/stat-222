@@ -45,7 +45,7 @@ library(mosaic)
 mean(days ~ trt, data=pr3.2)
 ```
 ```{r}
-anova(lm(days ~ trt, data = pr3.2))
+anova(lm(days ~ as.factor(trt), data = pr3.2))
 ```
 $\text{LSD}= t_{N-g,\frac{\alpha}{2}} * \sqrt{\text{MSE}(\frac{1}{n}+\frac{1}{n})}$
 We find the value for $t_{N-g,\frac{\alpha}{2}}$ here:
@@ -159,13 +159,13 @@ $\hat{C} = \displaystyle \sum_{i=1}^{g} c_{i}\bar{y}_{i\cdot} = \frac{1}{15}*\ba
 
 $\displaystyle SE(\hat{C}) = \sqrt{MSE*\sum_{i=1}^{g}\frac{c_{i}^{2}}{n_{i}}}$ <br>We get the MSE from the ANOVA table below:
 ```{r}
-anova(lm(deg ~ trt, data = ex3.5))
+anova(lm(deg ~ as.factor(trt), data = ex3.5))
 ```
 $\displaystyle SE(\hat{C}) = \sqrt{55 * (\frac{(\frac{1}{15})^2}{5} + \frac{(\frac{1}{15})^2}{5} + \frac{(\frac{-2}{15})^2}{5})} = 0.5416$
 
 
 $t = \displaystyle \frac{-0.34667}{0.5416}=-0.64008$
 ```{r}
-2*pt(abs(-0.64008),15-2,lower.tail = F)
+2*pt(abs(-0.64008),15-3,lower.tail = F)
 ```
 Since $p>0.05$, we fail to reject the null hypothesis that the relationship is linear, meaning that it is likely that the relationship is indeed linear. 
