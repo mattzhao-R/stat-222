@@ -1,0 +1,132 @@
+---
+title: 'STAT 222 Spring 2022 HW3'
+author: "Matthew Zhao"
+fontsize: 12pt
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin=0.5in
+fig_crop: no
+---
+
+```{r echo=F}
+library(knitr)
+library(ggplot2)
+knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=TRUE)
+options(width=70, digits=5, scipen=8)
+options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+```{r include=F}
+library(mosaic)
+library(tidyverse)
+```
+
+# Question 1
+
+```{r}
+pr3.2 = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/pr3.2",h=T)
+pr3.2$trt = factor(pr3.2$trt, labels=c("0", "1p", "1v","8p", "8v"))
+```
+
+## Q1a --- 5 points
+
+Calculate Tukey's HSD (honest significant difference) required for 
+two groups to be significantly different in mean at 5% level. 
+Use Tukey's HSD to do pairwise comparisons and summarize the result with an underline diagram.
+
+$\displaystyle \frac{q_{\alpha}(g,N-g)}{\sqrt{2}} \times \sqrt{\text{MSE}(\frac{1}{n}+\frac{1}{n})}$
+
+```{r}
+anova(lm(days ~ as.factor(trt), data = pr3.2))
+```
+
+
+```{r}
+left <- sqrt(219.28*((1/25)+(1/25)))
+right <- qtukey(0.95,5,125-5)/sqrt(2)
+left * right
+```
+```{r echo=F}
+fly_means <- pr3.2 %>% group_by(trt) %>% summarise(group_mean = mean(days))
+for (x in 1:(nrow(fly_means)-1)) {
+  for (y in (x+1):nrow(fly_means)) {
+    print(paste0(as.character(fly_means[x,1]),"-",
+                 as.character(fly_means[y,1]), " ",
+                 round(abs(fly_means$group_mean[x]-
+                             fly_means$group_mean[y]),3),
+                 "   ",
+                 ifelse(abs(fly_means$group_mean[x]-
+                              fly_means$group_mean[y]) < 11.60049,
+                        "Not Significant", "Significant")))
+  }
+}
+```
+Underline Diagram
+```
+  5 (8v)      4 (8p)       1 (none)      2 (1p)      3 (1v)
+   38.72       56.76         63.36        63.56      64.80
+            ------------------------------------------------
+```
+
+## Q1b --- 5 points
+Bonferroni is the best for pre-planned contrasts.
+
+
+
+
+## Q1c --- 4 points
+
+
+
+
+# Question 2
+
+```{r}
+milk = read.table("http://www.stat.uchicago.edu/~yibi/s222/milkbacteria.txt", h=T)
+```
+
+## Q2a --- 3 points
+
+
+
+## Q2b --- 1 point
+
+
+
+## Q2c --- 1 point
+
+
+```{r}
+milk2 = with(milk, aggregate(count, by=list(hours, bottle), mean))
+names(milk2) = c("hours", "bottle", "count")
+milk2
+```
+
+```{r}
+anova(lm(log(count) ~ as.factor(hours), data = milk2))
+```
+
+
+
+## Q2d --- 5 Points
+
+
+```{r}
+anova(lm(log(count) ~ as.factor(bottle), data=subset(milk, hours == 1)))
+anova(lm(log(count) ~ as.factor(bottle), data=subset(milk, hours == 6)))
+anova(lm(log(count) ~ as.factor(bottle), data=subset(milk, hours == 12)))
+anova(lm(log(count) ~ as.factor(bottle), data=subset(milk, hours == 18)))
+```
+
+```{r, message=FALSE, fig.width=5, fig.height=4, out.width='75%'}
+library(ggplot2)
+milk$hoursfac = factor(milk$hours, labels=c("1 hour", "6 hours","12 hours","18 hours"))
+ggplot(milk, aes(x=bottle, y=log(count)))+
+  geom_point() +
+  facet_wrap(~hoursfac,scale="free")
+```
+
+
