@@ -22,6 +22,7 @@ options(show.signif.stars = FALSE) # Show no stars for significance tests
 ```{r include=F}
 library(mosaic)
 library(tidyverse)
+library(emmeans)
 ```
 
 # Question 1
@@ -73,13 +74,45 @@ Underline Diagram
 
 ## Q1b --- 5 points
 Bonferroni is the best for pre-planned contrasts.
+```{r}
+mod1 = aov(days ~ as.factor(trt), data=pr3.2)
+mod1emm = emmeans(mod1,specs = "trt",adjust="bonf")
+contrast(mod1emm,
+  list(o1 = c(1,-1,0,0,0), o2 = c(1,0,-1,0,0),o3 = c(1,0,0,-1,0),
+                    o4 = c(1,0,0,0,-1),c1 = c(1,-0.5,-0.5,0,0),
+                    c2 = c(1,0,0,-0.5,-0.5),c3 = c(0,-0.5,0.5,-0.5,0.5),
+                    c4 = c(0,-1,1,1,-1)),level=0.95,infer=c(T,F))
+
+```
 
 
+Critical value is:
+```{r}
+qt(0.05/2/8,125-5,lower.tail = F)
+```
 
 
 ## Q1c --- 4 points
+The investigator can use Scheffe's Method for contrasts.<br>
+$\displaystyle |t_{o}|=\frac{|\hat{C}|}{SE(\hat{C})}$
+```{r}
+mod1emm = emmeans(mod1,specs = "trt")
+contrast(mod1emm, list(C = c(0.25,0.25,0.25,0.25,-1)),infer=c(F,F))
+
+```
 
 
+$\text{df} = 120$<br>
+$\hat{C} = \displaystyle \sum_{i=1}^{g} c_{i} \bar{y}_{i\cdot} = 23.4$<br>
+$\displaystyle \text{SE}(\hat{C}) = \sqrt{MSE \times  \sum_{i=1}^{g} \frac{c_{i}^{2}}{n_{i}}} = 3.31$<br>
+Test statistic: $|t_{o}| = \displaystyle \frac{|\hat{C}|}{\text{SE}(\hat{C})} = \frac{23.4}{3.31} = 7.0695$<br>
+Critical value: $\displaystyle \sqrt{(g-1)F_{\alpha \text{,}g-1\text{,}N-g}}$:
+```{r}
+sqrt((5-1)*qf(0.05,df1=5-1,df2=125-5,lower.tail = F))
+```
+
+
+We can conclude that since the test statistic is larger than the critical value, we can reject the null hypothesis that the contrast equals zero, meaning that there is an effect. 
 
 
 # Question 2
@@ -90,10 +123,15 @@ milk = read.table("http://www.stat.uchicago.edu/~yibi/s222/milkbacteria.txt", h=
 
 ## Q2a --- 3 points
 
-
+Experimental unit: a bottle
+Measurement unit: a single 5 ml sample taken from a bottle
 
 ## Q2b --- 1 point
-
+```{r}
+m1 <- milk %>% group_by(hours) %>% mutate(group_count = sum(count)) %>%
+  summarise(count = mean(group_count))
+anova(lm(log(count) ~ as.factor(hours), data = m1))
+```
 
 
 ## Q2c --- 1 point
@@ -110,6 +148,7 @@ anova(lm(log(count) ~ as.factor(hours), data = milk2))
 ```
 
 
+The result using the 5 mL sample is more significant.<br>
 
 ## Q2d --- 5 Points
 
@@ -128,5 +167,10 @@ ggplot(milk, aes(x=bottle, y=log(count)))+
   geom_point() +
   facet_wrap(~hoursfac,scale="free")
 ```
+
+
+i) The results from the tests should be insignificant if the samples from the bottle are independent.<br>
+ii) The four samples are positively correlated. In words, if a sample is taken from a specific bottle with a certain treatment, log(count) of that bottle will most likely be similar to log(count) of samples from the same bottle and treatment.<br>
+iii) If we use samples as the experimental unit, the significant result that we get from looking at the relationship between log(count) and hours is also capturing the statistically significant effect of samples being from the same bottle. This confounding variable of bottle causes our result to appear more significant than it actually is and also means that the samples are not iid, specifically they are not independent.  
 
 
