@@ -12,7 +12,7 @@ geometry: margin=0.5in
 fig_crop: no
 ---
 
-```{r echo=F}
+```{r include=F}
 library(knitr)
 library(ggplot2)
 knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=TRUE)
@@ -106,7 +106,11 @@ $\text{df} = 120$<br>
 $\hat{C} = \displaystyle \sum_{i=1}^{g} c_{i} \bar{y}_{i\cdot} = 23.4$<br>
 $\displaystyle \text{SE}(\hat{C}) = \sqrt{MSE \times  \sum_{i=1}^{g} \frac{c_{i}^{2}}{n_{i}}} = 3.31$<br>
 Test statistic: $|t_{o}| = \displaystyle \frac{|\hat{C}|}{\text{SE}(\hat{C})} = \frac{23.4}{3.31} = 7.0695$<br>
+
+
 Critical value: $\displaystyle \sqrt{(g-1)F_{\alpha \text{,}g-1\text{,}N-g}}$:
+
+
 ```{r}
 sqrt((5-1)*qf(0.05,df1=5-1,df2=125-5,lower.tail = F))
 ```
@@ -123,14 +127,12 @@ milk = read.table("http://www.stat.uchicago.edu/~yibi/s222/milkbacteria.txt", h=
 
 ## Q2a --- 3 points
 
-Experimental unit: a bottle
-Measurement unit: a single 5 ml sample taken from a bottle
+Experimental unit: a bottle<br>
+Measurement unit: a single 5 ml sample taken from a bottle<br>
 
 ## Q2b --- 1 point
 ```{r}
-m1 <- milk %>% group_by(hours) %>% mutate(group_count = sum(count)) %>%
-  summarise(count = mean(group_count))
-anova(lm(log(count) ~ as.factor(hours), data = m1))
+anova(lm(log(count) ~ as.factor(hours), data = milk))
 ```
 
 
