@@ -167,7 +167,7 @@ text(wheat56$Longitude, wheat56$Latitude,
 ```
 
 
-
+There is a spatial pattern of the residuals. Specifically, we can see a clustering of positive (black) residuals in the upper left and bottom left with the negative (red) residuals primarily in the middle and bottom right. Additionally, the residuals are highly correlated with their neighboring plots, with black plots and red plots near others of the same color. 
 
 ### Q3b --- 1 point
 
@@ -194,6 +194,31 @@ cor(as.vector(res.array[1:21,1:11]),as.vector(res.array[2:22,1:11]),
 ```
 
 
+There is strong evidence of spatial dependence given the positive trend and clustering in the top right. Additionally, the correlation value itself is fairly larger than zero at 0.55, indicating spatial dependence. 
 
 ### Q3c --- 3 points
 
+```{r, fig.width=3, fig.height=2.6}
+# South
+plot(as.vector(res.array[1:22,1:10]),as.vector(res.array[1:22,2:11]), 
+     xlab="e[i,j-1]", ylab="e[i,j]", main = "South")
+cor(as.vector(res.array[1:22,1:10]),as.vector(res.array[1:22,2:11]), 
+    use="complete.obs")
+```
+```{r, fig.width=3, fig.height=2.6}
+# Southwest
+plot(as.vector(res.array[1:21,1:10]),as.vector(res.array[2:22,2:11]), 
+     xlab="e[i-1,j-1]", ylab="e[i,j]", main = "Southwest")
+cor(as.vector(res.array[1:21,1:10]),as.vector(res.array[2:22,2:11]), 
+    use="complete.obs")
+```
+
+```{r, fig.width=3, fig.height=2.6}
+plot(as.vector(res.array[1:21,2:11]),as.vector(res.array[2:22,1:10]), 
+     xlab="e[i-1,j+1]", ylab="e[i,j]", main = "Southeast")
+cor(as.vector(res.array[1:21,2:11]),as.vector(res.array[2:22,1:10]), 
+    use="complete.obs")
+```
+
+
+Yes. All of the correlations are relatively positive (>0.5), indicating that there is a positive relationship between the residual of a plot and its neighbors. 
