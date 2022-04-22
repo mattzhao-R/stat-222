@@ -11,7 +11,7 @@ geometry: margin = .65in
 fontsize: 12pt
 ---
 
-```{r echo=F}
+```{r include=F}
 library(knitr)
 knitr::opts_chunk$set(fig.width=4, fig.height=3.5, message=F, warning=F, collapse=T)
 options(scipen=6, digits=5)
@@ -31,7 +31,15 @@ insulate = read.table("http://www.stat.uchicago.edu/~yibi/s222/insulate.txt", h=
 m1 = lm(failtime~as.factor(material),data=insulate)
 m2 = lm(log(failtime) ~ as.factor(material), data=insulate)
 ```
+```{r}
+qqnorm(m1$residuals)
+qqline(m1$residuals)
+qqnorm(m2$residuals)
+qqline(m2$residuals)
+```
 
+
+These graphs suggest that our assumption that the data are not normally distributed is incorrect, since prior to transforming the response (failtime), the points did not fall on the line. After the log transformation of the response, the points fell on the line. 
 
 ### Q1b --- 2 points
 
@@ -45,6 +53,9 @@ summary(emmeans(m1, "material", level=0.95))
 summary(emmeans(m2, "material", level=0.95))
 exp(summary(emmeans(m2, "material", level=0.95))[,5:6])
 ```
+
+
+I believe that the second method is more reasonable because the m1 model violates our assumption of normal data and specifically has non-constant variance. As a result, the confidence intervals generated using this data would be incorrect since they were created assuming normal data. Since the data from the m2 model was normalized and then reverted, I would trust these confidence intervals more.
 
 
 ## Question 2
@@ -61,6 +72,14 @@ logging = read.table("http://www.stat.uchicago.edu/~yibi/s222/logging.txt", h=T)
 library(ggplot2)
 ggplot(logging, aes(x=condition, y=nitrate)) + geom_boxplot()
 ```
+```{r, fig.width=3, fig.height=2.8, out.width='30%'}
+model = lm(nitrate~as.factor(condition),data=logging)
+qqnorm(model$residuals)
+qqline(model$residuals)
+```
+
+
+Right-skewed. This is confirmed by the boxplots which have large 75 percentiles far from the 50 percentiles. 
 
 ### Q2b --- 4 points
 
@@ -69,7 +88,16 @@ ggplot(logging, aes(x=condition, y=nitrate)) + geom_boxplot()
 logging$lognitrate = log(10+logging$nitrate)
 lmlog = lm(lognitrate ~ condition, data=logging)
 ```
+```{r}
+ggplot(data = lmlog, aes(x = lmlog$fitted.values, y = lmlog$residuals)) +
+  geom_point() + labs(x = "Fitted Values", y = "Residuals")
+qqnorm(lmlog$residuals)
+qqline(lmlog$residuals)
 
+```
+
+
+The plots tell us that both assumptions are false. The constant variability assumption is violated since the first group of fitted values has a lower variance than the second group of fitted values. The normality assumption is violated since the points do not fall on the line of the normal qq plot. 
 
 ### Q2c --- 2 points
 
@@ -81,10 +109,12 @@ ggplot(logging, aes(x=week, y=lmlog$res)) +
 ```
 
 
+The graph for Undisturbed is fairly smooth, indicating positive autocorrelation and that there is serial dependence. The Patch-cut has smooth patches especially towards the beginning, indicating that there is also serial dependence. 
+
 ### Q2d --- 2 points
 
 
-```{r, fig.width=3, fig.height=3, fig.show='hold', out.width=c('35%', '35%')}
+```{r, fig.width=5, fig.height=3, fig.show='hold', out.width=c('35%', '35%')}
 res.patch = subset(lmlog$res, logging$condition == "Patch-cut")
 res.undisturb = subset(lmlog$res, logging$condition == "Undisturbed")
 par(mai=c(.6,.6,.3,.01),mgp=c(2,.7,0))
@@ -97,9 +127,12 @@ plot(res.undisturb[1:87], res.undisturb[2:88], ylab="Current Residuals",
 cor(res.undisturb[1:87], res.undisturb[2:88])
 ```
 
+
+Both plots exhibit a weak positive correlation, indicating serial dependence.
+
 ### Q2e --- 2 points
 
-
+I do not. This is because the data violates a number of our assumptions, meaning a standard ANOVA F-test is not suitable. Specifically, because the data show serial dependence (positive autocorrelation), the MSE will underestimate the actual variance of the noise. This will cause the F statistic to be artificially large and make it more likely that we will have a lower p value and reject the null i.e. the likelihood of Type I Error is higher.
 
 ## Question 3
 
@@ -132,6 +165,7 @@ text(wheat56$Longitude, wheat56$Latitude,
      labels = round(rstudent(lmwheat),1), cex=0.75, 
      col = 1+(rstudent(lmwheat)>0))
 ```
+
 
 
 
