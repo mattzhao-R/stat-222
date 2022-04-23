@@ -1,0 +1,99 @@
+---
+title: "STAT 222 Spring 2021 HW6"
+author: "Matthew Zhao"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin = .65in
+fontsize: 12pt
+---
+
+```{r echo=F}
+library(knitr)
+knitr::opts_chunk$set(fig.width=4, fig.height=3.5, message=F, warning=F, collapse=T)
+options(scipen=6, digits=6)
+options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+
+
+```{r}
+wtlift = read.table("http://www.stat.uchicago.edu/~yibi/s222/weight.lifting.txt", h=T)
+```
+
+
+## Q1 --- 7 points
+
+```{r, message=FALSE,warning=F}
+library(mosaic)
+mean(rate ~ 1, data=wtlift)
+mean(rate ~ A, data=wtlift)
+mean(rate ~ B, data=wtlift)
+mean(rate ~ B+A, data=wtlift)
+```
+
+
+Using the code above, we estimate $\mu = 31.1364$.
+
+
+$\alpha_i = \bar{y}_{i\cdot\cdot} - \bar{y}_{\cdot\cdot\cdot}\\$
+$\alpha_1  = 32.2727 - 31.1364 = 1.1363$, $\alpha_2  = 30.0000 - 31.1364 = -1.1364\\$
+
+**Remark** (not required):
+```{r}
+wtlift$A = as.factor(wtlift$A)
+wtlift$B = as.factor(wtlift$B)
+contrasts(wtlift$A) = contr.sum(2)
+contrasts(wtlift$B) = contr.sum(3)
+lm1 = lm(rate ~ A * B, data=wtlift)
+lm1$coef
+```
+
+## Q2 --- 8 points
+
+```{r}
+SST = var(wtlift$rate)*(66-1)
+```
+
+You may verify your calculation in R as follows:
+```{r}
+lm1 = lm(rate ~ A * B, data=wtlift)
+options(scipen=6, digits=8)  # increasing the number of digits in the output
+anova(lm1)
+options(scipen=6, digits=5)  # restoring the digit setting back to 5
+```
+
+
+## Q3 --- 3 points
+
+```{r, fig.show='hold', fig.width=3.5, fig.height=2.5, out.width=c('40%','40%')}
+par(mai=c(.6,.6,.1,.3),mgp=c(2,.6,0))
+with(wtlift, interaction.plot(A, B, rate, type="b"))
+with(wtlift, interaction.plot(B, A, rate, type="b"))
+```
+
+
+```{r, fig.show='hold', fig.width=3, fig.height=3, out.width=c('45%','45%')}
+wtlift$A = as.factor(wtlift$A)
+wtlift$B = as.factor(wtlift$B)
+library(ggplot2)
+ggplot(wtlift, aes(x=A,y=rate, color=B))+
+  geom_point(position = position_jitter(width = .1))+
+  stat_summary(fun="mean",geom="line",aes(group=B,linetype=B)) +
+  theme(legend.position="top")
+ggplot(wtlift, aes(x=B,y=rate,color=A))+
+  geom_point(position = position_jitter(width = .1))+
+  stat_summary(fun="mean",geom="line",aes(group=A,linetype=A)) +
+  theme(legend.position="top")
+```
+
+
+
+## Q4 --- 4 points
+
+
+
+## Q5 --- 3 points
+
