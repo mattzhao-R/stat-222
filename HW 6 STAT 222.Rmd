@@ -11,7 +11,7 @@ geometry: margin = .65in
 fontsize: 12pt
 ---
 
-```{r echo=F}
+```{r echo=F, warning=F}
 library(knitr)
 knitr::opts_chunk$set(fig.width=4, fig.height=3.5, message=F, warning=F, collapse=T)
 options(scipen=6, digits=6)
@@ -35,11 +35,28 @@ mean(rate ~ B+A, data=wtlift)
 ```
 
 
-Using the code above, we estimate $\mu = 31.1364$.
+Using the code above, we estimate $hat{\mu} = \bar{y}_{\cdot\cdot\cdot} = 31.1364\\$
 
 
-$\alpha_i = \bar{y}_{i\cdot\cdot} - \bar{y}_{\cdot\cdot\cdot}\\$
-$\alpha_1  = 32.2727 - 31.1364 = 1.1363$, $\alpha_2  = 30.0000 - 31.1364 = -1.1364\\$
+$\hat{\alpha}_i = \bar{y}_{i\cdot\cdot} - \bar{y}_{\cdot\cdot\cdot}\\$
+$\hat{\alpha}_1  = 32.2727 - 31.1364 = 1.1363\\$
+$\hat{\alpha}_2  = 30.0000 - 31.1364 = -1.1364\\$
+
+
+$\hat{\beta}_j = \bar{y}_{\cdot j \cdot} - \bar{y}_{\cdot\cdot\cdot}\\$
+$\hat{\beta}_1 = 26.5909 - 31.1364 = -4.5455\\$ 
+$\hat{\beta}_2 = 32.2273 - 31.1364 = 1.0909\\$ 
+$\hat{\beta}_3 = 34.5909 - 31.1364 = 3.4545\\$ 
+
+
+$\hat{\alpha\beta}_{ij} = \bar{y}_{ij\cdot} - \bar{y}_{i\cdot\cdot} - \bar{y}_{\cdot j \cdot} + \bar{y}_{\cdot\cdot\cdot}\\$
+$\hat{\alpha\beta}_{11} = 27.9091 - 32.2727 - 26.5909 + 31.1364 = 0.1819\\$
+$\hat{\alpha\beta}_{12} = 33.0000 - 32.2727 - 32.2273 + 31.1364 = -0.3636\\$ 
+$\hat{\alpha\beta}_{13} = 35.9091 - 32.2727 - 34.5909 + 31.1364 = 0.1819\\$ 
+$\hat{\alpha\beta}_{21} = 25.2727 - 30.0000 - 26.5909 + 31.1364 = -0.1818\\$
+$\hat{\alpha\beta}_{22} = 31.4545 - 30.0000 - 32.2273 + 31.1364 = 0.3636\\$
+$\hat{\alpha\beta}_{23} = 33.2727 - 30.0000 - 34.5909 + 31.1364 = -0.1818\\$
+
 
 **Remark** (not required):
 ```{r}
@@ -56,6 +73,22 @@ lm1$coef
 ```{r}
 SST = var(wtlift$rate)*(66-1)
 ```
+
+
+$\text{SS}_{\text{A}} = \displaystyle bn \sum_{i=1}^{a} \hat{\alpha}_{i}^{2}\\$
+$\text{SS}_{\text{B}} = \displaystyle an \sum_{j=1}^{b} \hat{\beta}_{j}^{2}\\$
+$\text{SS}_{\text{AB}} = \displaystyle n \sum_{i=1}^{a} \sum_{j=1}^{b} \hat{\alpha\beta}_{ij}^{2}\\$
+```{r}
+wtlift %>% count(A,B)
+SSA = length(unique(wtlift$B)) * 11 * ((1.1363)^2 + (-1.1364)^2)
+SSB = length(unique(wtlift$A)) * 11 * ((-4.5455)^2 + (1.0909)^2 + (3.4545)^2)
+SSAB = 11 * ((0.1819)^2 + (-0.3636)^2 + (0.1819)^2 + 
+               (-0.1818)^2 + (0.3636)^2 + (-0.1818)^2)
+SST - SSA - SSB - SSAB
+```
+
+
+
 
 You may verify your calculation in R as follows:
 ```{r}
@@ -74,7 +107,6 @@ with(wtlift, interaction.plot(A, B, rate, type="b"))
 with(wtlift, interaction.plot(B, A, rate, type="b"))
 ```
 
-
 ```{r, fig.show='hold', fig.width=3, fig.height=3, out.width=c('45%','45%')}
 wtlift$A = as.factor(wtlift$A)
 wtlift$B = as.factor(wtlift$B)
@@ -90,10 +122,35 @@ ggplot(wtlift, aes(x=B,y=rate,color=A))+
 ```
 
 
+From the graphs, we can see that there is clearly a main effect for both A and B since varying the level of A or B while holding the other constant clearly results in different means. This makes sense since both main effects were statistically significant as seen in the ANOVA table with extremely low p values. Additionally, the graphs confirm that the interaction term is insignificant as seen in the ANOVA table with a high p value. The effects are roughly parallel in both the first and second graph, indicating that there is little interaction effect between A and B. 
 
 ## Q4 --- 4 points
 
+```{r, message=F,warning=F,fig.width=8, fig.height=4.5, out.width='75%'}
+lm1 = lm(rate ~ A * B, data=wtlift)
+plot(lm1$fitted.values, lm1$residuals, xlab = "Fitted Values", ylab = "Residuals")
+qqnorm(lm1$residuals)
+qqline(lm1$residuals)
+```
+```{r,fig.width=7, fig.height=4.5, out.width='75%'}
+library(MASS)
+boxcox(lm1)
+```
 
+
+The plot of fitted values against the residuals reveals that the data could potentially be exhibiting non-constant variance. Additionally, the normal qq plot indicates that the data might not be normal since there is clustering in the center as well as points off the line at the edges. However, our boxcox plot shows that 1 does fall within our 95% confidence interval so we most likely do not need to perform a power or log transformation. I qualify this statement with the fact that the CI is extremely wide so it is possible that some transformation could be useful. 
 
 ## Q5 --- 3 points
+
+```{r, message=F,warning=F,fig.width=8, fig.height=4.5, out.width='75%'}
+plot(wtlift$order, lm1$residuals, xlab = "Order", ylab = "Residuals")
+plot(lm1$residuals[2:nrow(wtlift)], lm1$residuals[1:(nrow(wtlift)-1)], main = "Lag-1")
+plot(lm1$residuals[3:nrow(wtlift)], lm1$residuals[1:(nrow(wtlift)-2)], main = "Lag-2")
+acf(lm1$residuals, lag.max = 5,plot=F)
+```
+
+
+Based on the graphs generated, there does not appear to be any evidence of serial dependence among the residuals. The time plot along with the two lag plots show virtually no correlation, while acf does not contradict that, with autocorrelation values barely above and below zero.
+
+
 
