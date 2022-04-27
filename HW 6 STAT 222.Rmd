@@ -142,15 +142,15 @@ The plot of fitted values against the residuals reveals that the data could pote
 
 ## Q5 --- 3 points
 
-```{r, message=F,warning=F,fig.width=8, fig.height=4.5, out.width='75%'}
+```{r, message=F,warning=F,fig.width=7, fig.height=4.5, out.width='\\textwidth'}
 plot(wtlift$order, lm1$residuals, xlab = "Order", ylab = "Residuals")
 plot(lm1$residuals[2:nrow(wtlift)], lm1$residuals[1:(nrow(wtlift)-1)], main = "Lag-1")
 plot(lm1$residuals[3:nrow(wtlift)], lm1$residuals[1:(nrow(wtlift)-2)], main = "Lag-2")
-acf(lm1$residuals, lag.max = 5,plot=F)
+acf(lm1$residuals, lag.max = 5,plot=T)
 ```
 
 
-Based on the graphs generated, there does not appear to be any evidence of serial dependence among the residuals. The time plot along with the two lag plots show virtually no correlation, while acf does not contradict that, with autocorrelation values barely above and below zero.
+Based on the graphs generated, there does not appear to be any evidence of serial dependence among the residuals. The time plot along with the two lag plots show virtually no correlation, while acf does not contradict that, with autocorrelation values barely above and below zero for other levels of lag.
 
 
 
