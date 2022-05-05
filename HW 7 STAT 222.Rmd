@@ -1,0 +1,78 @@
+---
+title: "STAT 222 Spring 2022 HW7"
+author: "Matthew Zhao"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin = .65in
+fontsize: 12pt
+---
+
+```{r echo=F}
+library(knitr)
+knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
+options(scipen=6, digits=6)
+# options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+
+```{r}
+pr8.4 = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/pr8.4", header=T)
+pr8.4$Time = factor(pr8.4$temp, labels = c("8hr","13hr"))
+pr8.4$Airflow = factor(pr8.4$flow, labels = c("L","H"))
+pr8.4$Laser = factor(pr8.4$laser, labels = c("old","new"))
+```
+
+## Q1 --- 5 points
+
+```{r, message=FALSE}
+library(mosaic)
+mean(y ~ 1, data=pr8.4)
+mean(y ~ Time, data=pr8.4)
+mean(y ~ Airflow, data=pr8.4)
+mean(y ~ Laser, data=pr8.4)
+mean(y ~ Time+Airflow, data=pr8.4)
+mean(y ~ Time+Laser, data=pr8.4)
+mean(y ~ Airflow+Laser, data=pr8.4)
+mean(y ~ Time+Airflow+Laser, data=pr8.4)
+```
+
+
+## Q2 --- 5 points
+
+
+```{r}
+contrasts(pr8.4$Time) = contr.sum(2)
+contrasts(pr8.4$Airflow) = contr.sum(2)
+contrasts(pr8.4$Laser) = contr.sum(2)
+lm1 = lm(y ~ Time*Airflow*Laser, data=pr8.4)
+lm1$coef
+options(digits=8) # increasing the number of digits in the output
+anova(lm1)
+```
+
+
+## Q3 --- 4 points
+
+```{r}
+lm1 = lm(y ~ Time*Airflow*Laser, data=pr8.4)
+anova(lm1)
+lmlog = lm(log(y) ~ Time*Airflow*Laser, data=pr8.4)
+anova(lmlog)
+```
+
+
+## Q4 --- 6 points
+
+```{r, fig.width=5, fig.height=2.5, out.width='60%'}
+par(mai=c(.6,.6,.01,.2),mgp=c(2,.6,0)) # for reducing the margin of the plot
+with(pr8.4, interaction.plot(Time:Laser,Airflow,log(y), type="b"))
+```
+
+
+
+## Q5 --- 5 points
+
+
