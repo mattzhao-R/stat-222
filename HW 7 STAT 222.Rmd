@@ -11,8 +11,9 @@ geometry: margin = .65in
 fontsize: 12pt
 ---
 
-```{r echo=F}
+```{r include=F}
 library(knitr)
+library(MASS)
 knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
 options(scipen=6, digits=6)
 # options(show.signif.stars = FALSE) # Show no stars for significance tests
@@ -61,8 +62,13 @@ anova(lm1)
 ```
 
 
-$SS_{Time}=\displaystyle bcn \sum_{i=1}^{a} (\hat{\alpha}_{i})^{2} = bcn((\hat{\alpha}_{13hr})^{2} + (\hat{\alpha}_{13hr})^{2}) = 2 * 2 * 2 *($
+$SS_{Time}=\displaystyle bcn \sum_{i=1}^{a} (\hat{\alpha}_{i})^{2} = bcn((\hat{\alpha}_{13hr})^{2} + (\hat{\alpha}_{13hr})^{2}) = 2 * 2 * 2 *((-0.293125)^2 + (0.293125)^2) = 1.374756$
 
+
+$SS_{Airflow-Laser}=\displaystyle an \sum_{jk} (\hat{\beta\gamma}_{jk})^{2} = an((\hat{\beta\gamma}_{L,old})^{2} + (\hat{\beta\gamma}_{H,old})^{2} + (\hat{\beta\gamma}_{L,new} + (\hat{\beta\gamma}_{H,new})^{2})^{2}) = 2 * 2 *((-0.023125)^2 + (0.023125)^2 + (0.023125)^2 + (-0.023125)^2) = 0.00855625$
+
+
+$SS_{Time-Airflow-Laser}=\displaystyle n \sum_{ijk} (\hat{\alpha\beta\gamma}_{ijk})^{2} = n((\hat{\alpha\beta\gamma}_{8hr,L,old})^{2} + (\hat{\alpha\beta\gamma}_{8hr,H,old})^{2} + (\hat{\alpha\beta\gamma}_{8hr,L,new})^{2} +  (\hat{\alpha\beta\gamma}_{8hr,H,new})^{2} + (\hat{\alpha\beta\gamma}_{13hr,L,old})^{2} + (\hat{\alpha\beta\gamma}_{13hr,H,old})^{2} + (\hat{\alpha\beta\gamma}_{13hr,L,new})^{2} +  (\hat{\alpha\beta\gamma}_{13hr,H,new})^{2}) = 2*(8*(0.026875)^2) = 0.01155625$
 
 ## Q3 --- 4 points
 
@@ -73,6 +79,22 @@ lmlog = lm(log(y) ~ Time*Airflow*Laser, data=pr8.4)
 anova(lmlog)
 ```
 
+```{r}
+boxcox(lm1)
+qqnorm(lm1$residuals)
+qqline(lm1$residuals)
+plot(lm1$fitted.values, lm1$residuals, xlab = "Fitted Values",
+     ylab = "Residuals", main = "lm1")
+```
+```{r}
+qqnorm(lmlog$residuals)
+qqline(lmlog$residuals)
+plot(lmlog$fitted.values, lmlog$residuals, xlab = "Fitted Values",
+     ylab = "Residuals", main = "lmlog")
+```
+
+
+I believe that the lmlog ANOVA table is more trustworthy. This is because for the standard regression, the graph of fitted values against residuals reveals non-constant variance. Additionally, the qq plot shows that the data is light-tailed. The boxcox plot shows that 1 does lie within the 95% confidence interval; however, the interval is extremely wide and the other graphs provide evidence that the data violates our assumptions. Lastly, the fitted values vs residual plot shows constant variance, indicating that the ANOVA results should be more reliable than those of the base linear model. 
 
 ## Q4 --- 6 points
 
@@ -80,6 +102,8 @@ anova(lmlog)
 par(mai=c(.6,.6,.01,.2),mgp=c(2,.6,0)) # for reducing the margin of the plot
 with(pr8.4, interaction.plot(Time:Laser,Airflow,log(y), type="b"))
 ```
+
+
 
 
 
