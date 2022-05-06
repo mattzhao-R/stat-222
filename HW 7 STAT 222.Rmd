@@ -39,6 +39,13 @@ mean(y ~ Airflow+Laser, data=pr8.4)
 mean(y ~ Time+Airflow+Laser, data=pr8.4)
 ```
 
+$\displaystyle \hat{\alpha}_{13hr} = \bar{y}_{13hr\cdot\cdot\cdot} - \bar{y}_{\cdot\cdot\cdot\cdot} = 0.19500-0.488125 = -0.293125$
+
+
+$\displaystyle \hat{\beta\gamma}_{H,new} = \bar{y}_{\cdot H,new\cdot} - \bar{y}_{\cdot H\cdot\cdot}-\bar{y}_{\cdot\cdot new\cdot}+\bar{y}_{\cdot\cdot\cdot\cdot}=0.4425-0.47500- 0.47875+0.488125 = -0.023125$
+
+
+$\displaystyle \hat{\alpha\beta\gamma}_{13hr,H,new} = \bar{y}_{13hr,H,new\cdot}-\bar{y}_{13hr,H\cdot\cdot}-\bar{y}_{13hr\cdot new\cdot} - \bar{y}_{\cdot H,new\cdot}+ \bar{y}_{13hr\cdot\cdot\cdot} + \bar{y}_{\cdot H\cdot\cdot} +\bar{y}_{\cdot\cdot new\cdot} - \bar{y}_{\cdot\cdot\cdot\cdot}= 0.120 -0.1725-  0.1925 - 0.4425 + 0.19500 +0.47500 + 0.47875 - 0.488125 = -0.026875$
 
 ## Q2 --- 5 points
 
@@ -52,6 +59,9 @@ lm1$coef
 options(digits=8) # increasing the number of digits in the output
 anova(lm1)
 ```
+
+
+$SS_{Time}=\displaystyle bcn \sum_{i=1}^{a} (\hat{\alpha}_{i})^{2} = bcn((\hat{\alpha}_{13hr})^{2} + (\hat{\alpha}_{13hr})^{2}) = 2 * 2 * 2 *($
 
 
 ## Q3 --- 4 points
