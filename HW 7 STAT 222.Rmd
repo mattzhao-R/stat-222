@@ -12,6 +12,7 @@ fontsize: 12pt
 ---
 
 ```{r include=F}
+library(tidyverse)
 library(knitr)
 library(MASS)
 knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
@@ -104,9 +105,29 @@ with(pr8.4, interaction.plot(Time:Laser,Airflow,log(y), type="b"))
 ```
 
 
+#### a)
+Using a new vs old laser and changing the furnance airflow both do not result in a significant difference on delamination rate. This can be seen in the graph where there is virtually no change in log of delamination rate from old to new and by the fact that the lines for low and high airflow are on top of each other. There also does not appear to be an interaction between laser and airflow since the lines are nearly the same and parallel. 
+#### b)
+Yes there does appear to be an interaction since the lines are not parallel. This means that the effect of changing the laser on the log of delamination rate changes with different levels of airflow. 
 
+#### c)
+The three way interaction would be significant since the interaction between laser and airflow changes with different levels of firing profile time. Specifically, when firing profile time is 8hr, there does not appear to be any interaction between laser and furnance airflow, but when firing profile time is 13hr, there appears to be a significant interaction between laser and furnance airflow, supporting my initial statement. 
+
+#### d)
+Firing for 13hr instead of 8hr decreases delamination rate, cutting with a new laser results in a lower delamination rate compared with using an old laser, and having higher furnace airflow similarly lowers the delamination rate. Our conclusion is consistent.
 
 
 ## Q5 --- 5 points
+
+```{r}
+q <- qtukey(1-0.05,8,2*2*2*(2-1))
+mse <- 0.02538
+hsd <- q/sqrt(2) * sqrt(mse*((1/2) + (1/2)))
+hsd
+```
+
+```{r}
+pr8.4 %>% group_by(Time,Airflow,Laser) %>% summarise(group_means = mean(y)) %>% arrange(desc(group_means))
+```
 
 
