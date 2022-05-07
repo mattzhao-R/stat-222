@@ -1,0 +1,61 @@
+---
+title: "STAT 222 Spring 2022 HW9"
+author: "Matthew Zhao"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin = .65in
+fontsize: 12pt
+---
+
+```{r echo=F}
+library(knitr)
+knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
+options(scipen=6, digits=6)
+# options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+```{r}
+pr8.2 = read.table("http://www.stat.uchicago.edu/~yibi/s222/pr8_2.txt", h=T)
+pr8.2$Slash = factor(pr8.2$slash, labels=c("0%","25%","50%"))
+pr8.2$Target = factor(pr8.2$target, labels=c(42,48))
+pr8.2$Resin = factor(pr8.2$resin, labels=c("6%","9%","12%"))
+```
+
+## Q1 --- 2 points
+
+
+
+## Q2 --- 4 points
+
+
+
+## Q3 --- 3 points
+
+
+
+## Q4 --- 3 points
+
+```{r, fig.width=7.5, fig.height=2, out.width='80%'}
+par(mai=c(.56,.56,.1,.1),mgp=c(1.8,.5,0))
+with(pr8.2, interaction.plot(Target:Slash, Resin,y,type="b"))
+```
+```{r, fig.width=3, fig.height=2, fig.show='hold', out.width=c('32%','32%','32%')}
+par(mai=c(.56,.56,.1,.4),mgp=c(1.8,.5,0))
+with(pr8.2, interaction.plot(Slash, Resin,y,type="b", ylim=c(42,50)))
+with(pr8.2, interaction.plot(Slash, Target,y,type="b", ylim=c(42,50)))
+with(pr8.2, interaction.plot(Resin, Target,y,type="b", ylim=c(42,50)))
+```
+
+
+## Q5 --- 4 points
+
+```{r, message=FALSE}
+library(mosaic)
+mean(y ~ Resin, data=pr8.2)
+```
+
+## Q6 --- 9 points
+

@@ -1,0 +1,56 @@
+---
+title: "STAT 222 Spring 2022 HW8"
+author: "Matthew Zhao"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin = .65in
+fontsize: 12pt
+---
+
+```{r echo=F}
+library(knitr)
+knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
+options(scipen=6, digits=6)
+# options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+
+
+```{r}
+warpbreaks = read.table("http://www.stat.uchicago.edu/~yibi/s222/warpbreaks.txt", h=T)
+warpbreaks$wool = as.factor(warpbreaks$wool)
+warpbreaks$tension = factor(warpbreaks$tension, labels=c("L","M","H"))
+lm1 = lm(breaks ~ wool*tension, data=warpbreaks)
+```
+
+## Q1 --- 5 points
+
+
+
+## Q2 --- 5 points
+
+
+
+## Q3 --- 5 points
+
+
+
+## Q4 --- 6 points
+
+```{r, fig.show='hold', fig.width=3.5, fig.height=2.5, out.width=c('40%','40%')}
+par(mai=c(.6,.6,.1,.3),mgp=c(2,.6,0))
+with(warpbreaks, interaction.plot(wool, tension, log(breaks), type="b"))
+with(warpbreaks, interaction.plot(tension, wool, log(breaks), type="b"))
+```
+
+
+
+## Q5 --- 1 point
+
+
+
+## Q6 --- 3 points
+
