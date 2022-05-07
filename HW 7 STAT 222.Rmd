@@ -127,7 +127,8 @@ hsd
 ```
 
 ```{r}
-pr8.4 %>% group_by(Time,Airflow,Laser) %>% summarise(group_means = mean(y)) %>% arrange(desc(group_means))
+pr8.4 %>% group_by(Time,Airflow,Laser) %>% summarise(.groups = 'keep',group_means = mean(log(y))) %>% arrange(desc(group_means))
 ```
 
 
+13hr, high airflow, and new laser, along with 13hr, low airflow, and old laser, are significantly lower than the other log means. Since they are within the HSD of each other, they are not significantly different from each other. This means that we should make more replicates for these two so that we can find which combination is the best. 
