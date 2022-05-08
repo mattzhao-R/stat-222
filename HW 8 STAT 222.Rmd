@@ -95,14 +95,14 @@ infer=c(T,F), level=0.98)
 ```
 
 
-$\mu_{1L} − \mu_{2L}$: (-0.803,33.5)
+$\mu_{1L} - \mu_{2L}$: (-0.803,33.5)
 
-$\mu_{1M} − \mu_{2M}$: (-21.914,12.4)
+$\mu_{1M} - \mu_{2M}$: (-21.914,12.4)
 
-$\mu_{1H} − \mu_{2H}$: (-11.358,22.9)
+$\mu_{1H} - \mu_{2H}$: (-11.358,22.9)
 
 
-We can conclude that the 
+We can conclude that there could be an interaction between wool type and level of tension since the CIs change with the level of tension. However, since the CIs all overlap, we cannot be sure that the interaction term is not insignificantly different than zero i.e. we cannot conclude that there is an interaction. 
 
 ## Q4 --- 6 points
 
@@ -113,7 +113,9 @@ with(warpbreaks, interaction.plot(tension, wool, log(breaks), type="b"))
 ```
 
 #### i)
+$C_1\text{: } \sum_i c_{ij} \Rightarrow \text{j=1: } (1)\mu_{1L} + (-1)\mu_{2L} = 1 + (-1) = 0$
 
+$\sum_j c_{ij} \Rightarrow (-1)\mu_{1M} = 1 + (-1) = 0$
 
 
 #### ii)
