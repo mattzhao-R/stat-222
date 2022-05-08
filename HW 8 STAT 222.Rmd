@@ -113,23 +113,73 @@ with(warpbreaks, interaction.plot(tension, wool, log(breaks), type="b"))
 ```
 
 #### i)
-$C_1\text{: } \sum_i c_{ij} \Rightarrow \text{j=1: } (1)\mu_{1L} + (-1)\mu_{2L} = 1 + (-1) = 0$
+$C_1\text{: } \sum_i c_{ij}$ 
 
-$\sum_j c_{ij} \Rightarrow (-1)\mu_{1M} = 1 + (-1) = 0$
+$\text{j=L: } (1)\mu_{1L} + (-1)\mu_{2L} = 1 + (-1) = 0$
+
+$\text{j=M: } (-1)\mu_{1M} + (1)\mu_{2M} = (-1) + 1 = 0$
+
+$\sum_j c_{ij}$  
+
+$\text{i=1: } (1)\mu_{1L} + (-1)\mu_{1M} = 1 + (-1) = 0$
+
+$\text{i=2: } (-1)\mu_{2L} + (1)\mu_{2M} = (-1) + 1 = 0$
+
+
+$C_2\text{: } \sum_i c_{ij}$ 
+
+$\text{j=H: } (1)\mu_{1H} + (-1)\mu_{2H} = 1 + (-1) = 0$
+
+$\text{j=M: } (-1)\mu_{1M} + (1)\mu_{2M} = (-1) + 1 = 0$
+
+$\sum_j c_{ij}$  
+
+$\text{i=1: } (1)\mu_{1H} + (-1)\mu_{1M} = 1 + (-1) = 0$
+
+$\text{i=2: } (-1)\mu_{2H} + (1)\mu_{2M} = (-1) + 1 = 0$
+
+
+$C_3\text{: } \sum_i c_{ij}$ 
+
+$\text{j=L: } (0.5)\mu_{1L} + (-0.5)\mu_{2L} = 0.5 + (-0.5) = 0$
+
+$\text{j=M: } (-1)\mu_{1M} + (1)\mu_{2M} = (-1) + 1 = 0$
+
+$\text{j=H: } (-0.5)\mu_{1H} + (0.5)\mu_{2H} = (-0.5) + 0.5 = 0$
+
+$\sum_j c_{ij}$  
+
+$\text{i=1: } (0.5)\mu_{1L} + (0.5)\mu_{1H} (-1)\mu_{1M}= 0.5 + 0.5 + 1 = 0$
+
+$\text{i=2: } (-0.5)\mu_{2L} + (-0.5)\mu_{2H} + (1)\mu_{2M}= (-0.5) + (-0.5) +1= 0$
 
 
 #### ii)
 
+We use Scheffe since we are performing contrasts after observing the data/based off of prior analysis. 
+
+```{r, warning=F}
+anova(lm1)
+lm1emmean <- emmeans(lm1,~tension:wool)
+summary(contrast(lm1emmean, method=list(C_1 = c(1,-1,0,-1,1,0), C_2 = c(0,-1,1,0,1,-1),C_3 = c(0.5,-1,0.5,-0.5,1,-0.5)), adjust="scheffe"),
+infer=c(F,T), level=0.96)
+```
 
 
+At FWER = 0.04, only the first contrast is significant. We can conclude that the change in effect of wool type on breaks is nonzero from low to medium. 
 
 ## Q5 --- 1 point
 
-
+The upper bound of the FWER for the entire analysis is no more than the sum of the FWER for each family so it is $0.02+0.02+0.02+0.04 = 0.1$.
 
 ## Q6 --- 3 points
 
-Bonferroni.
+Bonferroni. 
 
-
+```{r, warning=F}
+anova(lm1)
+lm1emmean <- emmeans(lm1,~tension:wool)
+summary(contrast(lm1emmean, method=list(C_1 = c(1,-1,0,-1,1,0), C_2 = c(0,-1,1,0,1,-1),C_3 = c(0.5,-1,0.5,-0.5,1,-0.5)), adjust="bonf"),
+infer=c(F,T), level=0.96)
+```
 
