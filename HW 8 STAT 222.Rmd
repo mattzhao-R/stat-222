@@ -11,8 +11,11 @@ geometry: margin = .65in
 fontsize: 12pt
 ---
 
-```{r echo=F}
+```{r include=F}
+library(tidyverse)
 library(knitr)
+library(emmeans)
+library(mosaic)
 knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
 options(scipen=6, digits=6)
 # options(show.signif.stars = FALSE) # Show no stars for significance tests
@@ -28,15 +31,78 @@ lm1 = lm(breaks ~ wool*tension, data=warpbreaks)
 
 ## Q1 --- 5 points
 
+We can use Tukey's HSD to control the FWER, where the HSD is given as $\displaystyle \frac{q_{g,dfE,\alpha}}{\sqrt{2}}\times\sqrt{\text{MSE}(\frac{1}{r}+\frac{1}{r})}$
 
+```{r}
+anova(lm1)
+```
+
+
+Calculating HSD:
+```{r}
+mse<-119.7
+qval<-qtukey(1-0.02,6,48)/sqrt(2)
+qval * sqrt(mse*(2/9))
+```
+```{r}
+sort(mean(breaks~wool+tension,data=warpbreaks))
+```
+
+
+```
+     2.H      1.M       1.H       2.L       2.M       1.L 
+  18.7778   24.0000   24.5556   28.2222   28.7778   44.5556 
+ -------------------------------------------------
+                               -----------------------------
+```
 
 ## Q2 --- 5 points
 
+We can again use Tukey's HSD
+
+```{r}
+anova(lm1)
+```
+
+
+Calculating HSD:
+```{r}
+mse<-119.7
+qval<-qtukey(1-0.02,3,48)/sqrt(2)
+qval * sqrt(mse*(2/(9*2)))
+```
+```{r}
+sort(mean(breaks~tension,data=warpbreaks))
+```
+
+
+```
+      H         M        L 
+  21.6667   26.3889   36.3889 
+ -------------------
+           -------------------
+```
 
 
 ## Q3 --- 5 points
 
+We again use Tukey.
+```{r}
+anova(lm1)
+lm1emmean <- emmeans(lm1,~tension:wool)
+summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
+infer=c(T,F), level=0.98)
+```
 
+
+$\mu_{1L} − \mu_{2L}$: (-0.803,33.5)
+
+$\mu_{1M} − \mu_{2M}$: (-21.914,12.4)
+
+$\mu_{1H} − \mu_{2H}$: (-11.358,22.9)
+
+
+We can conclude that the 
 
 ## Q4 --- 6 points
 
@@ -46,6 +112,13 @@ with(warpbreaks, interaction.plot(wool, tension, log(breaks), type="b"))
 with(warpbreaks, interaction.plot(tension, wool, log(breaks), type="b"))
 ```
 
+#### i)
+
+
+
+#### ii)
+
+
 
 
 ## Q5 --- 1 point
@@ -53,4 +126,8 @@ with(warpbreaks, interaction.plot(tension, wool, log(breaks), type="b"))
 
 
 ## Q6 --- 3 points
+
+Bonferroni.
+
+
 
