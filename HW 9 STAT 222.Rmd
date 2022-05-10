@@ -135,6 +135,6 @@ infer=c(T,F), level=0.95)
 ```
 
 
-We use Tukey's method. $
+We use Tukey's method: $\displaystyle\hat{C} \pm \frac{q_{g,dfE,\alpha}}{\sqrt{2}} \times \sqrt{\text{MSE}(\frac{1}{r}+\frac{1}{r})}$. We can conclude that target density is associated with an increase in actual density, increasing the amount of resin is also associated with an increase in actual density, and that increasing the fraction of slash has inconclusive effects on the actual density since 0 is in the CI for both contrasts.
 
 
