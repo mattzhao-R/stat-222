@@ -11,8 +11,10 @@ geometry: margin = .65in
 fontsize: 12pt
 ---
 
-```{r echo=F}
+```{r include=F}
+library(MASS)
 library(knitr)
+library(emmeans)
 knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
 options(scipen=6, digits=6)
 # options(show.signif.stars = FALSE) # Show no stars for significance tests
@@ -26,15 +28,54 @@ pr8.2$Resin = factor(pr8.2$resin, labels=c("6%","9%","12%"))
 
 ## Q1 --- 2 points
 
-
+We cannot because there is only 1 replicate per group. As a result, the error term has no degrees of freedom and so we cannot estimate $\sigma^2$ and calculate the MSE for hypothesis testing. This means that to perform testing, we need to pool higher order interactions into the error which means we cannot test all interactions.
 
 ## Q2 --- 4 points
 
+```{r,warning=F}
+lm1 = lm(y~Slash*Target*Resin, data = pr8.2)
+anova(lm1)
+```
 
+
+$\text{MSE}=0.46+0.3+0.67+0.44=1.87$
+
+$\text{df}_{\text{MSE}} = 4+2+4+2=12$
+
+```{r,warning=F}
+mse <- 1.87
+df_mse <- 12
+# Slash
+F.stat <- 4.87/mse
+sprintf("Slash p-value: %f", pf(F.stat,2,df_mse,lower.tail = F))
+
+# Target
+F.stat <- 105.61/mse
+sprintf("Target p-value: %f",pf(F.stat,1,df_mse,lower.tail = F))
+
+# Resin
+F.stat <- 26.06/mse
+sprintf("Resin p-value: %f",pf(F.stat,2,df_mse,lower.tail = F))
+```
+
+
+We can conclude that Target and Resin have an effect on the density of board produced.  
 
 ## Q3 --- 3 points
 
+```{r,warning=F}
+lm1 = lm(y~Slash+Target+Resin, data = pr8.2)
+```
+```{r,warning=F}
+qqnorm(lm1$residuals)
+qqline(lm1$residuals)
+plot(lm1$fitted.values, lm1$residuals, xlab = "Fitted Values",
+     ylab = "Residuals", main = "lm1")
+boxcox(lm1)
+```
 
+
+The points mostly fall on the line, meaning that there's no indication that the normality assumption is violated. Additionally, the fitted values vs residuals plot does not reveal significant nonconstant variance, which is supported by the boxcox plot whose 95% CI includes 1, indicating that there is no need for power transformation of the response. 
 
 ## Q4 --- 3 points
 
@@ -50,12 +91,50 @@ with(pr8.2, interaction.plot(Resin, Target,y,type="b", ylim=c(42,50)))
 ```
 
 
+For three-way interactions, the lines at 42 target density are parallel, while for 48 target they are no longer parallel. This is evidence of a three-way interaction since the interaction between Slash and Resin appears to change from 42 target density to 48 target density. For two-way interactions, it appears that there are interactions between Slash and Resin since the lines are not parallel. However, the interactions of Target-Slash and Target-Resin are absent since the lines are parallel. 
+
 ## Q5 --- 4 points
 
 ```{r, message=FALSE}
 library(mosaic)
 mean(y ~ Resin, data=pr8.2)
+mean(~y,data = pr8.2)
 ```
 
+
+$\beta_{j} = \bar{y}_{\cdot j\cdot} - \bar{y}_{\cdot\cdot\cdot}$
+
+
+$j=\text{6\%: } 43.9667-46.1889=-2.2222$
+
+
+$j=\text{9\%: } 46.5000-46.1889=0.3111$
+
+
+$j=\text{12\%: } 48.1000-46.1889=1.9111$
+
+
+$\text{SS}_{\text{j}} = acn\sum_j (\hat{\beta}_j)^2 = 2*3*1*((-2.2222)^2 + (0.3111)^2 + (1.9111)^2) = 52.1236$
+
 ## Q6 --- 9 points
+
+```{r}
+lm1emmean <- emmeans(lm1,~Slash)
+summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
+infer=c(T,F), level=0.95)
+```
+```{r}
+lm1emmean <- emmeans(lm1,~Target)
+summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
+infer=c(T,F), level=0.95)
+```
+```{r}
+lm1emmean <- emmeans(lm1,~Resin)
+summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
+infer=c(T,F), level=0.95)
+```
+
+
+We use Tukey's method. $
+
 
