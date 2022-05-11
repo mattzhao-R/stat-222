@@ -157,7 +157,7 @@ $\text{i=2: } (-0.5)\mu_{2L} + (-0.5)\mu_{2H} + (1)\mu_{2M}= (-0.5) + (-0.5) +1=
 
 #### ii)
 
-We use Scheffe since we are performing contrasts after observing the data/based off of prior analysis. Scheffe's Adjustment can be given as $\hat{C} \pm \text{SE}(\hat{C})\times\sqrt{df_{\text{AB}}F_{df_{AB},dfE,\alpha}}$ where $\hat{C}= \sum_{ij}c_{ij}\bar{y}_{ij}$. 
+We use Scheffe since we are performing contrasts after observing the data/based off of prior analysis. We compare $\frac{\hat{C}}{\text{SE}(\hat{C})}$ with  $\sqrt{df_{\text{AB}}F_{df_{AB},dfE,\alpha}}$, where $\hat{C}= \sum_{ij}c_{ij}\bar{y}_{ij}$.
 
 ```{r, warning=F}
 anova(lm1)
@@ -197,7 +197,7 @@ The upper bound of the FWER for the entire analysis is no more than the sum of t
 
 ## Q6 --- 3 points
 
-Bonferroni. 
+Bonferroni: $\hat{C} \pm t_{dfE,\alpha/2/m} * \text{SE}(\hat{C})$
 
 ```{r, warning=F}
 anova(lm1)
@@ -207,4 +207,4 @@ infer=c(F,T), level=0.96)
 ```
 
 
-We can conclude at FWER=0.04 level that only the first contrast is significiant. This means that 
+We can conclude at FWER=0.04 level that only the first contrast is significant. This means that 
