@@ -86,23 +86,24 @@ sort(mean(breaks~tension,data=warpbreaks))
 
 ## Q3 --- 5 points
 
-We again use Tukey.
+We use Bonferroni. 
 ```{r}
 anova(lm1)
 lm1emmean <- emmeans(lm1,~tension:wool)
-summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
+summary(contrast(lm1emmean, method=list(Ls = c(1,0,0,-1,0,0),Ms = c(0,1,0,0,-1,0),Hs = c(0,0,1,0,0,-1)), adjust="bonf"),
 infer=c(T,F), level=0.98)
 ```
 
 
-$\mu_{1L} - \mu_{2L}$: (-0.803,33.5)
+$\mu_{1L} - \mu_{2L}$: (1.71,30.96)
 
-$\mu_{1M} - \mu_{2M}$: (-21.914,12.4)
+$\mu_{1M} - \mu_{2M}$: (-19.40,9.85)
 
-$\mu_{1H} - \mu_{2H}$: (-11.358,22.9)
+$\mu_{1H} - \mu_{2H}$: (-8.85,20.40)
 
 
-We can conclude that there could be an interaction between wool type and level of tension since the CIs change with the level of tension. However, since the CIs all overlap, we cannot be sure that the interaction term is not insignificantly different than zero i.e. we cannot conclude that there is an interaction. 
+We can conclude that there could potentially be an interaction since the CIs for the effect of changing wool type change with tension level. This means that there could be an interaction. However, since the CIs all overlap, with the first and third CIs having significant overlap, we cannot be sure that there is an interaction. 
+
 
 ## Q4 --- 6 points
 
@@ -156,17 +157,39 @@ $\text{i=2: } (-0.5)\mu_{2L} + (-0.5)\mu_{2H} + (1)\mu_{2M}= (-0.5) + (-0.5) +1=
 
 #### ii)
 
-We use Scheffe since we are performing contrasts after observing the data/based off of prior analysis. 
+We use Scheffe since we are performing contrasts after observing the data/based off of prior analysis. Scheffe's Adjustment can be given as $\hat{C} \pm \text{SE}(\hat{C})\times\sqrt{df_{\text{AB}}F_{df_{AB},dfE,\alpha}}$ where $\hat{C}= \sum_{ij}c_{ij}\bar{y}_{ij}$. 
 
 ```{r, warning=F}
 anova(lm1)
-lm1emmean <- emmeans(lm1,~tension:wool)
-summary(contrast(lm1emmean, method=list(C_1 = c(1,-1,0,-1,1,0), C_2 = c(0,-1,1,0,1,-1),C_3 = c(0.5,-1,0.5,-0.5,1,-0.5)), adjust="scheffe"),
-infer=c(F,T), level=0.96)
+mean(breaks~wool+tension,data=warpbreaks)
 ```
 
 
-At FWER = 0.04, only the first contrast is significant. We can conclude that the change in effect of wool type on breaks is nonzero from low to medium. 
+$\hat{C}_1 = 44.5556 - 28.2222 - (24.0000-28.7778) = 21.1112$
+
+
+$\hat{C}_2 = 24.5556 - 18.7778 - (24.0000-28.7778) = 10.5556$
+
+
+$\hat{C}_3 = \frac{\hat{C}_1 + \hat{C}_2}{2} = 15.8334$
+
+
+$\text{SE}(\hat{C}) = \sqrt{\text{MSE}\times\sum_{ij}\frac{c_{ij}^2}{r}}$
+```{r, warning=F}
+mse <- 119.7
+se_c12 <- sqrt(mse*(4*(1/9)))
+se_c3 <- sqrt(mse*(((4*((0.5^2)/9))) + (2*(1/9))))
+sprintf("C_1 t-stat: %f",21.1112/se_c12)
+sprintf("C_2 t-stat: %f",10.5556/se_c12)
+sprintf("C_3 t-stat: %f",15.8334/se_c3)
+
+fcrit <- qf(0.04,(2-1)*(3-1),48,lower.tail = F)
+scheffe <- sqrt((2-1)*(3-1)*fcrit)
+sprintf("Scheffe Critical Value: %f",scheffe)
+```
+
+
+At FWER = 0.04, only the first contrast is significant. We can conclude that the change in effect of wool type on breaks is nonzero from low to medium. However, we cannot conclude that there is a significant interaction effect since only 1 of 3 contrasts testing for interaction were significant. 
 
 ## Q5 --- 1 point
 
@@ -183,3 +206,5 @@ summary(contrast(lm1emmean, method=list(C_1 = c(1,-1,0,-1,1,0), C_2 = c(0,-1,1,0
 infer=c(F,T), level=0.96)
 ```
 
+
+We can conclude at FWER=0.04 level that only the first contrast is significiant. This means that 
