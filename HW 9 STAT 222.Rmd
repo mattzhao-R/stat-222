@@ -118,23 +118,46 @@ $\text{SS}_{\text{j}} = acn\sum_j (\hat{\beta}_j)^2 = 2*3*1*((-2.2222)^2 + (0.31
 
 ## Q6 --- 9 points
 
-```{r}
-lm1emmean <- emmeans(lm1,~Slash)
-summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
-infer=c(T,F), level=0.95)
-```
-```{r}
-lm1emmean <- emmeans(lm1,~Target)
-summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
-infer=c(T,F), level=0.95)
-```
-```{r}
-lm1emmean <- emmeans(lm1,~Resin)
-summary(contrast(lm1emmean, method="pairwise", adjust="tukey"),
-infer=c(T,F), level=0.95)
+Bonferroni: $\hat{C} \pm t_{dfE,\alpha/2/m} * \text{SE}(\hat{C})$
+
+```{r, message=FALSE}
+library(mosaic)
+mean(y ~ Target, data=pr8.2)
+mean(y ~ Resin, data=pr8.2)
+mean(y ~ Slash, data=pr8.2)
 ```
 
 
-We use Tukey's method: $\displaystyle\hat{C} \pm \frac{q_{g,dfE,\alpha}}{\sqrt{2}} \times \sqrt{\text{MSE}(\frac{1}{r}+\frac{1}{r})}$. We can conclude that target density is associated with an increase in actual density, increasing the amount of resin is also associated with an increase in actual density, and that increasing the fraction of slash has inconclusive effects on the actual density since 0 is in the CI for both contrasts.
+$\alpha_{48}-\alpha_{42}\text{: } \hat{C}_1 = 48.6111 -43.7667 = 4.8444$
+
+$\beta_{9\%}-\beta_{6\%}\text{: } \hat{C}_2 = 46.5000-43.9667=2.5333$
+
+$\beta_{12\%}-\beta_{9\%}\text{: } \hat{C}_3 = 48.1000-46.5000=1.6$
+
+$\gamma_{25\%}-\gamma_{0\%}\text{: } \hat{C}_4 = 46.2333-45.2667=0.9666$
+
+$\gamma_{50\%}-\gamma_{25\%}\text{: } \hat{C}_5 = 47.0667-46.2333=0.8334$
+
+
+```{r}
+mse <- 1.87
+df_mse <- 12
+se_a <- sqrt(mse*(2*(1/(1*3*3))))
+se_b <- sqrt(mse*(2*(1/(1*2*3))))
+se_g <- sqrt(mse*(2*(1/(1*2*3))))
+
+m <- 5
+bonf <- qt(0.05/2/m,12,lower.tail = F)
+
+sprintf("C_1 CI: %f",4.8444 + c(-se_a*bonf,se_a*bonf))
+sprintf("C_2 CI: %f",2.5333 + c(-se_b*bonf,se_b*bonf))
+sprintf("C_3 CI: %f",1.6 + c(-se_b*bonf,se_b*bonf))
+sprintf("C_4 CI: %f",0.9666 + c(-se_g*bonf,se_g*bonf))
+sprintf("C_5 CI: %f",0.8334 + c(-se_g*bonf,se_g*bonf))
+
+```
+
+
+We can conclude that target density is associated with an increase in actual density, increasing the amount of resin is also generally associated with an increase in actual density, and that increasing the fraction of slash has inconclusive effects on the actual density since 0 is in the CI for both contrasts.
 
 
