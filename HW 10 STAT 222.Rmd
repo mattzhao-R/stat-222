@@ -11,8 +11,10 @@ geometry: margin = .65in
 fontsize: 12pt
 ---
 
-```{r echo=F}
+```{r include=F}
+library(ggplot2)
 library(knitr)
+library(emmeans)
 knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
 options(scipen=6, digits=7)
 # options(show.signif.stars = FALSE) # Show no stars for significance tests
@@ -27,20 +29,55 @@ auditor = read.table("http://www.stat.uchicago.edu/~yibi/s222/AuditorTraining", 
 
 ## Q1a --- 2 points
 
+```{r}
+auditor$treatment = as.factor(auditor$treatment)
+auditor$block = as.factor(auditor$block)
 
+with(auditor, interaction.plot(block,treatment,y,type='b'))
+# ggplot(data = auditor, mapping = aes(x=block, y=y,color = treatment)) + 
+#   geom_line() + geom_point() + xlab("Block") + ylab("Response")
+```
+
+
+It is not reasonable to assume no treatment-block interaction since the lines are not parallel.
 
 ## Q1b --- 3 points
 
+```{r}
+lm <- lm(data = auditor, y~treatment+block)
+anova(lm)
+mean(~y,data=auditor)
+sort(mean(y~treatment,data=auditor))
+```
 
+
+$SS_{trt} = \displaystyle b\sum_{i=1}^g(\bar{y}_{i\cdot}-\bar{y}_{\cdot\cdot})^2$
+
+$\displaystyle = 10*((70.6-77.1)^2 + (74.6-77.1)^2 + (86.1-77.1)^2) = 1295$
 
 ## Q1c --- 4 points
 
-
+```{r}
+lmemmeans <- emmeans(lm,~treatment)
+sprintf("Tukey's HSD: %f",qtukey(1-0.05,3,18)/sqrt(2) * sqrt(6.24*((1/10)+(1/10)))) # hsd
+summary(contrast(lmemmeans,method="pairwise",adjust="tukey"),infer=c(T,T), level=0.95)
+```
 
 ## Q1d --- 4 points
 
+```{r}
+lm1 <- lm(data = auditor,y~treatment)
+anova(lm1)
+```
+
+```{r}
+sprintf("New Tukey's HSD: %f",qtukey(1-0.05,3,27)/sqrt(2) * sqrt(20.21*((1/10)+(1/10)))) # hsd
+lm1emmeans <- emmeans(lm1,~treatment)
+summary(contrast(lm1emmeans,method="pairwise",adjust="tukey"),infer=c(T,T), level=0.95)
+```
 
 
+Only the latter two pairs are significant (1-3),(2-3).
 
 # Question 2
 
@@ -50,17 +87,47 @@ mydata = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/pr13.4", he
 
 ## Q2a --- 2 points
 
-
+It is a Latin Squares design with two squares reusing columns (grader block).
 
 ## Q2b --- 2 points
 
+```{r}
+lm2 <- lm(score~as.factor(exam)+as.factor(student)+as.factor(grader),data = mydata)
+anova(lm2)
+```
 
 
+No because the p value for the exams treatment is significantly smaller than 0.05,0.01,etc. This means that we can reject the null that the effect of different exams on score is zero, and so we conclude that exams are not equivalent in the level difficulty since exams have an effect on score.
 
 ## Q2c --- 4 points
 
+```{r}
+lm2emmeans <- emmeans(lm2,~exam)
+summary(contrast(lm2emmeans,method=list(c_1 = c(-1,0,1/3,1/3,1/3),c_2 = c(0,-1,1/3,1/3,1/3)),adjust="bonferroni"),infer=c(F,F), level=0.95)
+bonf <- qt(0.05/2/2,32,lower.tail = F)
+se <- sqrt(13.91 * ((3*(((1/3)^2)/10)) + (1/10))) #se
+bonf*se
+```
+
+```{r}
+sprintf("CI C1: (%f, %f)",8.1-bonf*se,8.1+bonf*se)
+sprintf("CI C2: (%f, %f)",-9.8-bonf*se,-9.8+bonf*se)
+```
 
 
+From contrast 1, since the 95% CI only contains positive values, we can conclude that exam A is more difficult than the old exams with previous exams having higher average scores than exam A. From contrast 2, sinec the 95% CI only contains negative values, we can conclude that exam B is easier than old exams with previous exams having lower average scores than exam B. 
 
 ## Q2d --- 4 points
 
+```{r}
+sprintf("Tukey's HSD: %f",qtukey(1-0.05,5,32)/sqrt(2) * sqrt(13.91*((1/10)+(1/10)))) # hsd
+lm2est <- emmeans(lm2,~grader)
+summary(contrast(lm2est,method="pairwise",adjust="tukey"),infer=c(F,F), level=0.95)
+```
+
+```
+   5      4        3       1      2  
+ 59.5    64.7    65.4    66.0   68.6 
+        -----------------------------  
+ -----------------------------
+```
