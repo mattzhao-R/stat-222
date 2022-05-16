@@ -1,0 +1,72 @@
+---
+title: "STAT 222 Spring 2022 HW11"
+author: "Matthew Zhao"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin = .65in
+fontsize: 12pt
+---
+
+```{r echo=F}
+library(knitr)
+knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
+options(scipen=6, digits=7)
+options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+
+```{r}
+pr14.4 = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/pr14.4", header=T)
+pr14.4$detergent = factor(pr14.4$treatment, labels=LETTERS[1:10])
+```
+
+
+## Q1 --- 6 points
+
+
+## Q2 --- 3 points
+
+```{r, message=FALSE, fig.width=5, fig.height=3}
+library(mosaic)
+ggplot(pr14.4, aes(x=detergent, y=softness, label=judge)) + 
+  geom_text(position = position_jitter(width = .15)) 
+```
+
+```{r}
+sort(mean(softness ~ detergent, data=pr14.4))
+```
+
+
+## Q3 --- 4 points
+
+```{r}
+pr14.4$judge = as.factor(pr14.4$judge)
+lm1 = lm(softness ~ judge + detergent, data=pr14.4)
+```
+
+
+## Q4 --- 5 points
+
+```{r}
+anova(lm(softness ~ judge + detergent, data=pr14.4))
+anova(lm(softness ~ detergent + judge, data=pr14.4))
+```
+
+
+## Q5 --- 2 points
+
+```{r}
+pr14.4$dtgt.sum = pr14.4$detergent
+pr14.4$judge.sum = pr14.4$judge
+contrasts(pr14.4$dtgt.sum) = contr.sum(10)
+contrasts(pr14.4$judge.sum) = contr.sum(30)
+lm1.sum = lm(softness ~ judge.sum + dtgt.sum, data=pr14.4)
+lm1.sum$coef
+```
+
+
+## Q6 --- 5 points
+

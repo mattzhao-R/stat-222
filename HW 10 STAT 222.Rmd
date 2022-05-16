@@ -1,0 +1,66 @@
+---
+title: "STAT 222 Spring 2022 HW10"
+author: "Matthew Zhao"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin = .65in
+fontsize: 12pt
+---
+
+```{r echo=F}
+library(knitr)
+knitr::opts_chunk$set(fig.width=4, fig.height=3, message=F, warning=F, collapse=T)
+options(scipen=6, digits=7)
+# options(show.signif.stars = FALSE) # Show no stars for significance tests
+```
+
+
+
+# Question 1 --- Auditor Training
+```{r}
+auditor = read.table("http://www.stat.uchicago.edu/~yibi/s222/AuditorTraining", header=T)
+```
+
+## Q1a --- 2 points
+
+
+
+## Q1b --- 3 points
+
+
+
+## Q1c --- 4 points
+
+
+
+## Q1d --- 4 points
+
+
+
+
+# Question 2
+
+```{r}
+mydata = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/pr13.4", header=T)
+```
+
+## Q2a --- 2 points
+
+
+
+## Q2b --- 2 points
+
+
+
+
+## Q2c --- 4 points
+
+
+
+
+## Q2d --- 4 points
+
