@@ -82,7 +82,27 @@ lm1.sum$coef
 ```
 
 
-
+Using the table above, the alphas are given as $\alpha_1 = 1.25000, \alpha_2 = -3.70000, \alpha_3 = 2.67500, \alpha_4 = 2.80000,\alpha_5 = 1.45000, \alpha_6 = -1.47500, \alpha_7 = -0.92500, \alpha_8 = -0.62500, \alpha_9 = 1.35000, \alpha_10 = -\sum_{i=1}^9 = -2.8$.
 
 ## Q6 --- 5 points
 
+```{r}
+mse <- 8.221
+k <- 4
+g <- 10
+lambda <- 4
+se <- sqrt(mse * (2*k/(g * lambda)))
+qtukey(1-0.05,10,81)/sqrt(2) * se #hsd
+```
+```{r}
+sort(lm1.sum$coef[(length(lm1.sum$coefficients)-8):length(lm1.sum$coefficients)])
+```
+
+
+```
+   B      J      F      G      H      A      I      E      C      D 
+-3.700  -2.8  -1.475 -0.925 -0.625  1.250  1.350  1.450  2.675  2.800 -----------------------------------
+        ----------------------------------------
+              ------------------------------------------------
+                     ------------------------------------------------
+```
