@@ -26,6 +26,7 @@ pr14.4$detergent = factor(pr14.4$treatment, labels=LETTERS[1:10])
 
 ## Q1 --- 6 points
 
+Judge is the block factor and detergent is the treatment factor. There are g=10 treatments and there are b=30 blocks with k=4 size. There are $r = \frac{bk}{g} = \frac{30*4}{10} = 12$ replicates per treatment. There are $\lambda = \frac{r(k-1)}{g-1} = \frac{12(4-1)}{10-1} = 4$ times a pair of treatments show up together in a block. Since $r$ and $\lambda$ are integers, this design meets the first and second balanced conditions.
 
 ## Q2 --- 3 points
 
@@ -39,6 +40,7 @@ ggplot(pr14.4, aes(x=detergent, y=softness, label=judge)) +
 sort(mean(softness ~ detergent, data=pr14.4))
 ```
 
+We should not use the mean rating because softness is subjective meaning that different judges would rate the same perceived softness (detergent treatment) differently. This leads to biased ratings by each judge as evidenced by judges who are biased downwards e.g. Judge 25 and biased upwards e.g. Judge 6. 
 
 ## Q3 --- 4 points
 
@@ -47,6 +49,16 @@ pr14.4$judge = as.factor(pr14.4$judge)
 lm1 = lm(softness ~ judge + detergent, data=pr14.4)
 ```
 
+```{r}
+plot(lm1$fitted.values, lm1$residuals, xlab = "Fitted Values", ylab = "Residuals")
+qqnorm(lm1$residuals)
+qqline(lm1$residuals)
+library(MASS)
+boxcox(lm1)
+```
+
+
+There does not seem to be nonconstant variance in the errors as seen in the fitted values vs residuals graph. The normal qq plot also doesn't point to any potential non-normality in the data. Lastly, the boxcox plot reveals a CI that does not contain a specific value so we do not need to transform the data.
 
 ## Q4 --- 5 points
 
@@ -55,6 +67,8 @@ anova(lm(softness ~ judge + detergent, data=pr14.4))
 anova(lm(softness ~ detergent + judge, data=pr14.4))
 ```
 
+
+The difference is because anova in R uses Type I Sum of Squares, meaning that for any term, it calculates sum of squares adjusted for terms that come before it in the model. We would use the first one where the judge block is before detergent in the model since we want to know the effect of treatment adjusted for block. Since p<0.05, we can conclude that detergent does have an effect on softness and that the detergents are not all equal. 
 
 ## Q5 --- 2 points
 
@@ -66,6 +80,8 @@ contrasts(pr14.4$judge.sum) = contr.sum(30)
 lm1.sum = lm(softness ~ judge.sum + dtgt.sum, data=pr14.4)
 lm1.sum$coef
 ```
+
+
 
 
 ## Q6 --- 5 points
