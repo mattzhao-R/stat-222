@@ -19,90 +19,31 @@ options(show.signif.stars = FALSE) # Show no stars for significance tests
 ```
 
 ```{r}
-pr14.4 = read.table("http://users.stat.umn.edu/~gary/book/fcdae.data/pr14.4", header=T)
-pr14.4$detergent = factor(pr14.4$treatment, labels=LETTERS[1:10])
-```
-
-
-## Q1 --- 6 points
-
-Judge is the block factor and detergent is the treatment factor. There are g=10 treatments and there are b=30 blocks with k=4 size. There are $r = \frac{bk}{g} = \frac{30*4}{10} = 12$ replicates per treatment. There are $\lambda = \frac{r(k-1)}{g-1} = \frac{12(4-1)}{10-1} = 4$ times a pair of treatments show up together in a block. Since $r$ and $\lambda$ are integers, this design meets the first and second balanced conditions.
-
-## Q2 --- 3 points
-
-```{r, message=FALSE, fig.width=5, fig.height=3}
-library(mosaic)
-ggplot(pr14.4, aes(x=detergent, y=softness, label=judge)) + 
-  geom_text(position = position_jitter(width = .15)) 
-```
-
-```{r}
-sort(mean(softness ~ detergent, data=pr14.4))
-```
-
-We should not use the mean rating because softness is subjective meaning that different judges would rate the same perceived softness (detergent treatment) differently. This leads to biased ratings by each judge as evidenced by judges who are biased downwards e.g. Judge 25 and biased upwards e.g. Judge 6. 
-
-## Q3 --- 4 points
-
-```{r}
-pr14.4$judge = as.factor(pr14.4$judge)
-lm1 = lm(softness ~ judge + detergent, data=pr14.4)
-```
-
-```{r}
-plot(lm1$fitted.values, lm1$residuals, xlab = "Fitted Values", ylab = "Residuals")
-qqnorm(lm1$residuals)
-qqline(lm1$residuals)
-library(MASS)
-boxcox(lm1)
-```
-
-
-There does not seem to be nonconstant variance in the errors as seen in the fitted values vs residuals graph. The normal qq plot also doesn't point to any potential non-normality in the data. Lastly, the boxcox plot reveals a CI that does not contain a specific value so we do not need to transform the data.
-
-## Q4 --- 5 points
-
-```{r}
-anova(lm(softness ~ judge + detergent, data=pr14.4))
-anova(lm(softness ~ detergent + judge, data=pr14.4))
-```
-
-
-The difference is because anova in R uses Type I Sum of Squares, meaning that for any term, it calculates sum of squares adjusted for terms that come before it in the model. We would use the first one where the judge block is before detergent in the model since we want to know the effect of treatment adjusted for block. Since p<0.05, we can conclude that detergent does have an effect on softness and that the detergents are not all equal. 
-
-## Q5 --- 2 points
-
-```{r}
-pr14.4$dtgt.sum = pr14.4$detergent
-pr14.4$judge.sum = pr14.4$judge
-contrasts(pr14.4$dtgt.sum) = contr.sum(10)
-contrasts(pr14.4$judge.sum) = contr.sum(30)
-lm1.sum = lm(softness ~ judge.sum + dtgt.sum, data=pr14.4)
-lm1.sum$coef
-```
-
-
-Using the table above, the alphas are given as $\alpha_1 = 1.25000, \alpha_2 = -3.70000, \alpha_3 = 2.67500, \alpha_4 = 2.80000,\alpha_5 = 1.45000, \alpha_6 = -1.47500, \alpha_7 = -0.92500, \alpha_8 = -0.62500, \alpha_9 = 1.35000, \alpha_10 = -\sum_{i=1}^9 = -2.8$.
-
-## Q6 --- 5 points
-
-```{r}
-mse <- 8.221
-k <- 4
-g <- 10
-lambda <- 4
-se <- sqrt(mse * (2*k/(g * lambda)))
-qtukey(1-0.05,10,81)/sqrt(2) * se #hsd
-```
-```{r}
-sort(lm1.sum$coef[(length(lm1.sum$coefficients)-8):length(lm1.sum$coefficients)])
-```
-
 
 ```
-   B      J      F      G      H      A      I      E      C      D 
--3.700  -2.8  -1.475 -0.925 -0.625  1.250  1.350  1.450  2.675  2.800 -----------------------------------
-        ----------------------------------------
-              ------------------------------------------------
-                     ------------------------------------------------
-```
+
+
+## Q1
+#### a)
+
+
+
+#### b)
+
+
+
+## Q2
+#### a)
+
+
+#### b)
+
+
+
+## Q3
+#### a)
+
+
+#### b)
+
+
