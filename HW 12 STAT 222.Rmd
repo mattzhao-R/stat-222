@@ -100,4 +100,29 @@ $\hat{C}_{AC}= y_{111}-y_{112}+y_{121}-y_{122}-y_{211}+y_{212}-y_{221}+y_{222}= 
 
 #### b)
 
+```{r}
+library(daewr)
+```
 
+```{r}
+abrasive$A = as.factor(abrasive$A)
+abrasive$B = as.factor(abrasive$B)
+abrasive$C = as.factor(abrasive$C)
+contrasts(abrasive$A) = contr.sum(2)
+contrasts(abrasive$B) = contr.sum(2)
+contrasts(abrasive$C) = contr.sum(2)
+lm1 = lm(y ~ A*B*C, data=abrasive)
+lm1$coef[-1]
+```
+
+```{r}
+halfnorm(lm1$coef[-1], alpha=0.05)
+```
+
+
+```{r}
+halfnorm(lm1$coef[-1], alpha=0.2)
+```
+
+
+At a significance level of 0.05, we do not find any of the effects to be significantly different than zero. Once we increase the level to 0.2, we find that B is significant, meaning that the B main effect could be nonzero. 
