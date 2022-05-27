@@ -52,18 +52,18 @@ c(4-var,4+var)
 ```
 
 
-$\hat{C_2}=-18.875-(-11.375)=-7.5$
+$\hat{C_2}=18.875-(-11.375)=30.25$
 
 ```{r}
 mse <- 44.155
 se <- sqrt(mse*((2*5)/(4*6)))
 var <- qt(0.02/2/2,df = 19, lower.tail = F) * se
 
-c(-7.5-var,-7.5+var)
+c(30.25-var,30.25+var)
 ```
 
 
-For the first CI, we can conclude that the effect on pulse rate of changing step frequency from 28 steps per minute to 14 at a step height of 5.75in is between -8.271348 and 16.271348 bpm. For the second CI, we can conclude that the effect on pulse rate of changing step frequency from 28 steps per minute to 14 at a step height of 11.5in is between -19.771348 and 4.771348 bpm. Since 0 falls within both CIs, we cannot say if there is an effect. 
+For the first CI, we can conclude that the effect on pulse rate of changing step frequency from 28 steps per minute to 14 at a step height of 5.75in is between -8.271348 and 16.271348 bpm. For the second CI, we can conclude that the effect on pulse rate of changing step frequency from 28 steps per minute to 14 at a step height of 11.5in is between 17.97865 and 42.52135 bpm. Since 0 falls within the first CIs, we cannot say if there is an effect. However, the second CI is strictly positive so we can say there is an effect.
 
 #### b)
 
@@ -100,6 +100,8 @@ $\hat{C}_{AC}= y_{111}-y_{112}+y_{121}-y_{122}-y_{211}+y_{212}-y_{221}+y_{222}= 
 
 #### b)
 
+
+Loading library and setting zero sum constraints. 
 ```{r}
 library(daewr)
 ```
